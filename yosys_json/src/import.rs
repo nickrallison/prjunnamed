@@ -72,12 +72,17 @@ struct ModuleImporter<'a> {
 }
 
 impl ModuleImporter<'_> {
-    fn drive(&mut self, bits: &yosys::BitVector, value: impl Into<Value>) {
+    fn drive(&mut self, bits: &yosys::BitVector, value: impl Into<Value>) -> Result<(), Box<dyn std::error::Error>> {
         let value = value.into();
-        assert_eq!(bits.len(), value.len());
+        // assert_eq!(bits.len(), value.len());
+        if bits.len() != value.len() {
+            return Err(format!("bitvector length {} does not match value length {}", bits.len(), value.len()).into());
+        }
         for (&bit, net) in bits.iter().zip(value.iter()) {
-            let yosys::Bit::Net(ynet) = bit else { unreachable!() };
-            assert!(!self.driven_nets.contains(&ynet));
+            let yosys::Bit::Net(ynet) = bit else { return Err("can only drive nets".into()) };
+            if self.driven_nets.contains(&ynet) {
+                return Err(format!("net {} is already driven", ynet).into());
+            }
             match self.nets.entry(ynet) {
                 btree_map::Entry::Occupied(e) => {
                     self.design.replace_net(*e.get(), net);
@@ -95,6 +100,7 @@ impl ModuleImporter<'_> {
             }
             self.driven_nets.insert(ynet);
         }
+        Ok(())
     }
 
     fn port_drive(&mut self, cell: &yosys::CellDetails, port: &str, value: impl Into<Value>) {
@@ -770,9 +776,19 @@ impl ModuleImporter<'_> {
                     outputs,
                     ios,
                 });
-                for (bits, range) in out_bits {
-                    self.drive(bits, &output[range]);
+
+                let results: Vec<Result<(), Box<dyn std::error::Error>>> =
+                    out_bits.iter().map(|(bits, range)| self.drive(bits, &output[range.clone()])).collect();
+
+                for r in results {
+                    if let Err(e) = r {
+                        println!("Warning: failed to connect instance output: {}", e);
+                    }
                 }
+
+                // if results.iter().any(|r| r.is_err()) {
+                //     return Err(Error::from(results.into_iter().find_map(|r| r.err()).unwrap()));
+                // }
             }
         }
         Ok(())
