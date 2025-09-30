@@ -41,7 +41,7 @@ impl Net {
         Net { index: cell_index as u32 + Net::FIRST_CELL }
     }
 
-    pub(crate) fn as_cell_index(self) -> Result<usize, Trit> {
+    pub fn as_cell_index(self) -> Result<usize, Trit> {
         if self.index >= Self::FIRST_CELL && self != Self::UNDEF {
             Ok((self.index - Self::FIRST_CELL) as usize)
         } else {
