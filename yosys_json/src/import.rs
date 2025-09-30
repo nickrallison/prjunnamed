@@ -5,7 +5,7 @@ use std::{
 };
 
 use prjunnamed_netlist::{
-    Const, ControlNet, Design, FlipFlop, Instance, IoBuffer, IoNet, IoValue, Net, ParamValue, Target, Trit, Value,
+    Const, ControlNet, ControlNets, Design, FlipFlop, Instance, IoBuffer, IoNet, IoValue, Net, ParamValue, Target, Trit, Value,
     Memory, MemoryWritePort, MemoryReadPort, MemoryReadFlipFlop, MemoryPortRelation, WithMetadataGuard, SourcePosition,
     MetaItem, MetaItemRef,
 };
@@ -654,7 +654,37 @@ impl ModuleImporter<'_> {
                 self.port_drive(cell, "Q", q);
             }
             "$dlatchsr" => {
-                panic!("$dlatchsr not implemented: {:#?}", cell);
+                let load_data = self.port_value(cell, "D");
+                let size = load_data.len();
+                let data = Value::undef(size); // unused for latches
+                let enable = ControlNet::Pos(Net::ONE); // always enabled for basic latch
+                let load = self.port_control_net(cell, "EN");
+                let clock = ControlNet::Pos(Net::ZERO); // tied to 0 for latches
+                let clr_value = self.port_value(cell, "CLR");
+                let clr_nets: Vec<Net> = clr_value.into_iter().collect();
+                let clear = if cell.parameters.get("CLR_POLARITY").unwrap().as_bool().unwrap() {
+                    ControlNets::Pos(clr_nets)
+                } else {
+                    ControlNets::Neg(clr_nets)
+                };
+                let clear_value = Const::zero(size); // clear to 0
+                let reset = ControlNet::Pos(Net::ZERO); // TODO: handle SET
+                let reset_value = Const::ones(size); // set to 1
+                let init_value = self.init_value(cell, "Q");
+                let q = self.design.add_dff(FlipFlop {
+                    data,
+                    clock,
+                    enable,
+                    reset,
+                    reset_over_enable: true,
+                    clear,
+                    load,
+                    load_data,
+                    init_value,
+                    reset_value,
+                    clear_value,
+                });
+                self.port_drive(cell, "Q", q);
             }
             "$adlatch" => {
                 panic!("$adlatch not implemented: {:#?}", cell);
