@@ -585,7 +585,7 @@ impl ModuleImporter<'_> {
             }
             "$dff" | "$dffe" | "$adff" | "$adffe" | "$sdff" | "$sdffe" | "$sdffce" | "$aldff" => {
                 let data = self.port_value(cell, "D");
-                                let enable = if cell.connections.contains_key("EN") {
+                let enable = if cell.connections.contains_key("EN") {
                     self.port_control_net(cell, "EN")
                 } else {
                     ControlNet::Pos(Net::ONE)
@@ -625,45 +625,45 @@ impl ModuleImporter<'_> {
                 self.port_drive(cell, "Q", q);
             }
             "$dlatch" | "$dlatchsr" | "$adlatch" => {
-            //     let data = self.port_value(cell, "D");
-            //                     let enable = if cell.connections.contains_key("EN") {
-            //         self.port_control_net(cell, "EN")
-            //     } else {
-            //         ControlNet::Pos(Net::ONE)
-            //     };
-            //     let (clear, clear_value) = if cell.connections.contains_key("ARST") {
-            //         (self.port_control_net(cell, "ARST"), cell.parameters.get("ARST_VALUE").unwrap().as_const()?)
-            //     } else {
-            //         (ControlNet::Pos(Net::ZERO), Const::undef(data.len()))
-            //     };
-            //     let (reset, reset_value) = if cell.connections.contains_key("SRST") {
-            //         (self.port_control_net(cell, "SRST"), cell.parameters.get("SRST_VALUE").unwrap().as_const()?)
-            //     } else {
-            //         (ControlNet::Pos(Net::ZERO), Const::undef(data.len()))
-            //     };
+                //     let data = self.port_value(cell, "D");
+                //                     let enable = if cell.connections.contains_key("EN") {
+                //         self.port_control_net(cell, "EN")
+                //     } else {
+                //         ControlNet::Pos(Net::ONE)
+                //     };
+                //     let (clear, clear_value) = if cell.connections.contains_key("ARST") {
+                //         (self.port_control_net(cell, "ARST"), cell.parameters.get("ARST_VALUE").unwrap().as_const()?)
+                //     } else {
+                //         (ControlNet::Pos(Net::ZERO), Const::undef(data.len()))
+                //     };
+                //     let (reset, reset_value) = if cell.connections.contains_key("SRST") {
+                //         (self.port_control_net(cell, "SRST"), cell.parameters.get("SRST_VALUE").unwrap().as_const()?)
+                //     } else {
+                //         (ControlNet::Pos(Net::ZERO), Const::undef(data.len()))
+                //     };
 
-            //     let (load, load_data) = if cell.connections.contains_key("ALOAD") {
-            //         (self.port_control_net(cell, "ALOAD"), self.port_value(cell, "AD"))
-            //     } else {
-            //         (ControlNet::Pos(Net::ZERO), Value::undef(data.len()))
-            //     };
+                //     let (load, load_data) = if cell.connections.contains_key("ALOAD") {
+                //         (self.port_control_net(cell, "ALOAD"), self.port_value(cell, "AD"))
+                //     } else {
+                //         (ControlNet::Pos(Net::ZERO), Value::undef(data.len()))
+                //     };
 
-            //     let clock = self.port_control_net(cell, "CLK");
-            //     let init_value = self.init_value(cell, "Q");
-            //     let q = self.design.add_dff(FlipFlop {
-            //         data,
-            //         clock,
-            //         enable,
-            //         reset,
-            //         reset_over_enable: cell.type_ != "$sdffce",
-            //         clear: clear.into(),
-            //         load,
-            //         load_data,
-            //         init_value,
-            //         reset_value,
-            //         clear_value,
-            //     });
-            //     self.port_drive(cell, "Q", q);
+                //     let clock = self.port_control_net(cell, "CLK");
+                //     let init_value = self.init_value(cell, "Q");
+                //     let q = self.design.add_dff(FlipFlop {
+                //         data,
+                //         clock,
+                //         enable,
+                //         reset,
+                //         reset_over_enable: cell.type_ != "$sdffce",
+                //         clear: clear.into(),
+                //         load,
+                //         load_data,
+                //         init_value,
+                //         reset_value,
+                //         clear_value,
+                //     });
+                //     self.port_drive(cell, "Q", q);
                 todo!()
             }
             "$mem_v2" => {

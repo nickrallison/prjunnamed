@@ -1,5 +1,9 @@
 use std::{
-    borrow::Cow, fmt::{Debug, Display}, hash::Hash, ops::{Deref, Index, IndexMut}, slice::SliceIndex
+    borrow::Cow,
+    fmt::{Debug, Display},
+    hash::Hash,
+    ops::{Deref, Index, IndexMut},
+    slice::SliceIndex,
 };
 
 use crate::{Const, Design, Trit};
@@ -720,7 +724,6 @@ pub enum ControlNets {
 }
 
 impl ControlNets {
-    
     pub fn undef(size: usize) -> Self {
         ControlNets::Pos(vec![Net::UNDEF; size])
     }
@@ -748,7 +751,7 @@ impl ControlNets {
         match self {
             ControlNets::Pos(nets) | ControlNets::Neg(nets) => nets.len(),
         }
-    } 
+    }
 
     pub fn push(&mut self, net: Net) {
         match self {
@@ -783,14 +786,15 @@ impl ControlNets {
     }
 
     pub fn control_nets(self) -> Vec<ControlNet> {
-        self.nets().iter().map(|&net| {
-            match self {
+        self.nets()
+            .iter()
+            .map(|&net| match self {
                 ControlNets::Pos(_) => ControlNet::Pos(net),
                 ControlNets::Neg(_) => ControlNet::Neg(net),
-            }
-        }).collect()
+            })
+            .collect()
     }
-    
+
     pub fn is_positive(&self) -> bool {
         matches!(self, Self::Pos(_))
     }
@@ -800,8 +804,7 @@ impl ControlNets {
     }
 
     pub fn is_active(&self) -> Option<bool> {
-
-        let nets =  self.nets();
+        let nets = self.nets();
         if nets.len() != 1 {
             return None;
         }
@@ -832,17 +835,20 @@ impl ControlNets {
         // }
         match self {
             Self::Neg(nets) => {
-                let new_nets: Vec<Net> = nets.into_iter().map(|net| {
-                    if net == Net::UNDEF {
-                        net
-                    } else if net == Net::ZERO {
-                        Net::ONE
-                    } else if net == Net::ONE {
-                        Net::ZERO
-                    } else {
-                        net
-                    }
-                }).collect();
+                let new_nets: Vec<Net> = nets
+                    .into_iter()
+                    .map(|net| {
+                        if net == Net::UNDEF {
+                            net
+                        } else if net == Net::ZERO {
+                            Net::ONE
+                        } else if net == Net::ONE {
+                            Net::ZERO
+                        } else {
+                            net
+                        }
+                    })
+                    .collect();
                 ControlNets::Pos(new_nets)
             }
             _ => self,
@@ -882,7 +888,7 @@ impl ControlNets {
                 for &net in nets.iter() {
                     net.visit(&mut f);
                 }
-            },
+            }
         }
     }
 
@@ -892,7 +898,7 @@ impl ControlNets {
                 for net in nets.iter_mut() {
                     f(net);
                 }
-            },
+            }
         }
     }
 }

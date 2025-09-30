@@ -21,7 +21,7 @@ mod isomorphic;
 mod smt;
 
 pub use logic::{Trit, Const};
-pub use value::{Net, ControlNet, Value};
+pub use value::{Net, ControlNet, ControlNets, Value};
 pub use param::ParamValue;
 pub use io::{IoNet, IoValue};
 pub use cell::{
