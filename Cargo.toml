@@ -9,7 +9,7 @@ members = [
     "yosys_json",
     "siliconblue",
     "graphviz",
-    "cli",
+    # "cli",
 ]
 
 [workspace.dependencies]
