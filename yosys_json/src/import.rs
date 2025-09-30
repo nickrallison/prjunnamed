@@ -653,6 +653,12 @@ impl ModuleImporter<'_> {
                 });
                 self.port_drive(cell, "Q", q);
             }
+            "$dlatchsr" => {
+                panic!("$dlatchsr not implemented: {:#?}", cell);
+            }
+            "$adlatch" => {
+                panic!("$adlatch not implemented: {:#?}", cell);
+            }
             "$mem_v2" => {
                 let offset = usize::try_from(cell.parameters.get("OFFSET").unwrap().as_i32()?).unwrap();
                 let size = usize::try_from(cell.parameters.get("SIZE").unwrap().as_i32()?).unwrap();
